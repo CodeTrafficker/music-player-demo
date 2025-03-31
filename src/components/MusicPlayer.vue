@@ -3,19 +3,24 @@
     <transition :name="transitionName" mode="out-in">
       <img :key="currentTrack.cover" :src="currentTrack.cover" alt="Album cover" class="album-cover">
     </transition>
+    <h3 class="track-title">{{ currentTrack.title }}</h3>
     <div class="controls">
-      <button @click="prevTrack" :disabled="isFirstTrack">
-        <i class="fas fa-backward"></i>
-        <span>Prev</span>
-      </button>
-      <button @click="togglePlay">
-        <i :class="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
-        <span>{{ isPlaying ? 'Pause' : 'Play' }}</span>
-      </button>
-      <button @click="nextTrack" :disabled="isLastTrack">
-        <i class="fas fa-forward"></i>
-        <span>Next</span>
-      </button>
+      <div class="prev-next-buttons">
+        <button @click="prevTrack">
+          <i class="fas fa-backward"></i>
+          <span>Prev</span>
+        </button>
+        <button @click="nextTrack">
+          <i class="fas fa-forward"></i>
+          <span>Next</span>
+        </button>
+      </div>
+      <div class="play-button">
+        <button @click="togglePlay">
+          <i :class="isPlaying ? 'fas fa-pause' : 'fas fa-play'"></i>
+          <span>{{ isPlaying ? 'Pause' : 'Play' }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -25,9 +30,12 @@ export default {
   data() {
     return {
       tracks: [
-        { title: 'Track 1', cover: require('../assets/images/cover1.jpg') },
-        { title: 'Track 2', cover: require('../assets/images/cover2.jpg') },
-        { title: 'Track 3', cover: require('../assets/images/cover3.jpg') },
+        { title: 'John Cale - Antarctica Starts Here', cover: require('../assets/images/cover1.jpg') },
+        { title: 'Harry Partch - Emergence Of The Spirit', cover: require('../assets/images/cover2.jpg') },
+        { title: 'The Raincoats - Shouting Out Loud', cover: require('../assets/images/cover3.jpg') },
+        { title: 'Massive Attack - Inertia Creeps', cover: require('../assets/images/cover4.jpg') },
+        { title: 'Sleeping Tapes - See You At The Dreaming Tree', cover: require('../assets/images/cover5.jpg') },
+        { title: 'Angelo Badalamenti - The Nightingale', cover: require('../assets/images/cover6.jpg') },
       ],
       currentIndex: 0,
       isPlaying: false,
@@ -47,15 +55,19 @@ export default {
   },
   methods: {
     prevTrack() {
+      this.transitionName = 'slide-right';
       if (this.currentIndex > 0) {
-        this.transitionName = 'slide-right';
         this.currentIndex--;
+      } else {
+        this.currentIndex = this.tracks.length - 1; // Loop back to the last cover
       }
     },
     nextTrack() {
+      this.transitionName = 'slide-left';
       if (this.currentIndex < this.tracks.length - 1) {
-        this.transitionName = 'slide-left';
         this.currentIndex++;
+      } else {
+        this.currentIndex = 0; // Loop back to the first cover
       }
     },
     togglePlay() {
@@ -81,11 +93,28 @@ export default {
   border-radius: 10px;
 }
 
-.controls {
-  display: flex;
-  justify-content: space-around;
+.track-title {
   width: 100%;
-  margin-top: 20px;
+  font-size: 1.2em; /* Reset to 1.2em */
+  text-align: left;
+  margin: 10px 0;
+}
+
+.controls {
+  width: 100%;
+}
+
+.prev-next-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.play-button {
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #333333; /* 1px solid line on top */
+  border-bottom: 1px solid #333333; /* 1px solid line on bottom */
 }
 
 button {
@@ -106,11 +135,11 @@ button:disabled {
 }
 
 button i {
-  font-size: 20px;
+  font-size: 24px; /* Increased to 24px */
 }
 
 button span {
-  font-size: 12px;
+  font-size: 15px; /* Reset to 15px */
   margin-top: 5px;
 }
 
@@ -121,6 +150,16 @@ button span {
 .slide-left-enter-from {
   opacity: 0;
   transform: translateX(100%);
+}
+
+.slide-left-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-left-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .slide-left-leave-to {
@@ -135,6 +174,16 @@ button span {
 .slide-right-enter-from {
   opacity: 0;
   transform: translateX(-100%);
+}
+
+.slide-right-enter-to {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slide-right-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 
 .slide-right-leave-to {
