@@ -3,7 +3,10 @@
     <transition :name="transitionName" mode="out-in">
       <img :key="currentTrack.cover" :src="currentTrack.cover" alt="Album cover" class="album-cover">
     </transition>
-    <h3 class="track-title">{{ currentTrack.title }}</h3>
+    <transition :name="parallelTransition" mode="out-in">
+      <h3 :key="currentTrack.title" class="track-title">{{ currentTrack.title }}</h3>
+    </transition>
+
     <div class="controls">
       <div class="prev-next-buttons">
         <button @click="prevTrack">
@@ -40,6 +43,7 @@ export default {
       currentIndex: 0,
       isPlaying: false,
       transitionName: 'slide-right',
+      parallelTransition: 'track-title',
     };
   },
   computed: {
@@ -56,6 +60,7 @@ export default {
   methods: {
     prevTrack() {
       this.transitionName = 'slide-right';
+      this.parallelTransition = 'track-title';
       if (this.currentIndex > 0) {
         this.currentIndex--;
       } else {
@@ -64,6 +69,7 @@ export default {
     },
     nextTrack() {
       this.transitionName = 'slide-left';
+      this.parallelTransition = 'track-title';
       if (this.currentIndex < this.tracks.length - 1) {
         this.currentIndex++;
       } else {
@@ -91,11 +97,13 @@ export default {
   width: 100%;
   height: auto;
   border-radius: 10px;
+  min-height: 260px;
+  max-height: 260px;
 }
 
 .track-title {
   width: 100%;
-  font-size: 1.2em; /* Reset to 1.2em */
+  font-size: 1.2em;
   text-align: left;
   margin: 10px 0;
 }
@@ -120,7 +128,7 @@ export default {
 button {
   background-color: transparent;
   border: none;
-  color: #333333; /* Dark off-grey color */
+  color: #333333;
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -130,20 +138,23 @@ button {
 }
 
 button:disabled {
-  color: #cccccc; /* Lighter grey for disabled buttons */
+  color: #cccccc;
   cursor: not-allowed;
 }
 
 button i {
-  font-size: 24px; /* Increased to 24px */
+  font-size: 24px; 
 }
 
 button span {
-  font-size: 15px; /* Reset to 15px */
+  font-size: 15px;
   margin-top: 5px;
 }
 
-.slide-left-enter-active, .slide-left-leave-active {
+
+/* .slide-left styles */
+.slide-left-enter-active, 
+.slide-left-leave-active {
   transition: opacity 0.5s, transform 0.5s;
 }
 
@@ -152,22 +163,21 @@ button span {
   transform: translateX(100%);
 }
 
-.slide-left-enter-to {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.slide-left-leave-from {
-  opacity: 1;
-  transform: translateX(0);
-}
-
 .slide-left-leave-to {
   opacity: 0;
   transform: translateX(-100%);
 }
 
-.slide-right-enter-active, .slide-right-leave-active {
+.slide-left-enter-to,
+.slide-left-leave-from {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* .slide-right styles */
+.slide-right-enter-active, 
+.slide-right-leave-active {
   transition: opacity 0.5s, transform 0.5s;
 }
 
@@ -176,11 +186,7 @@ button span {
   transform: translateX(-100%);
 }
 
-.slide-right-enter-to {
-  opacity: 1;
-  transform: translateX(0);
-}
-
+.slide-right-enter-to,
 .slide-right-leave-from {
   opacity: 1;
   transform: translateX(0);
@@ -189,5 +195,19 @@ button span {
 .slide-right-leave-to {
   opacity: 0;
   transform: translateX(100%);
+}
+
+
+
+/* h3.track-title controls, in parallel to album cover dissolves */
+
+.track-title-enter-from, .track-title-leave-to {
+  opacity: 0;
+}
+.track-title-enter-to, .track-title-leave-from {
+  opacity: 1;
+}
+.track-title-enter-active, .track-title-leave-active {
+  transition: opacity 0.5s;
 }
 </style>
